@@ -9,6 +9,9 @@
 #include <QLabel>
 #include <QFrame>
 #include <QComboBox>
+#include <QLineEdit>
+#include <vector>
+#include <math.h>
 
 class tableau : public QWidget {
 Q_OBJECT
@@ -19,6 +22,19 @@ public:
 
 private:
     QGridLayout *gridLayout;
+
+    void AjoutDonne();
+
+    void cumul();
+
+    std::vector<std::vector<float>> _Donnees;
+    QLineEdit *inputD;
+    QLineEdit *inputQ;
+    QLineEdit *inputH;
+    QLineEdit *inputL;
+    QComboBox *Materiau;
+
+
 };
 
 #endif //PERTEDECHARGEHERSE_TABLEAU_H
