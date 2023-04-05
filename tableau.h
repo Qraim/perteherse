@@ -45,11 +45,15 @@ private:
     QScrollArea *scrollArea;
     QWidget* scrollWidget;
 
+    QLineEdit *lineEdit1;
+    QLineEdit *lineEdit2;
+    QLineEdit *lineEdit3;
+    QLineEdit *lineEdit4;
+
+
     std::vector<std::vector<float>> _Donnees;
 
     void AjoutDonne();
-
-    void cumul();
 
     void AjoutLigne();
 
@@ -60,6 +64,10 @@ private:
     void keyPressEvent(QKeyEvent *event);
 
     bool Allinputfill();
+
+    void calcul();
+
+    void RafraichirTableau();
 
 };
 
