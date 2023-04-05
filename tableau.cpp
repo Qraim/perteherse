@@ -35,8 +35,8 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     QLabel *V = new QLabel("Vitesse (m/s)", this);
     QLabel *J = new QLabel("Perte de charge (m)", this);
     QLabel *P = new QLabel("Piezo (m)", this);
-    QLabel *sigmaJ = new QLabel("Σ Perte", this);
-    QLabel *sigmaP = new QLabel("Σ Piezo", this);
+    QLabel *sigmaJ = new QLabel("Σ Perte ", this);
+    QLabel *sigmaP = new QLabel("Σ Piezo ", this);
 
     gridLayout->addWidget(numero, 1, 0);
     gridLayout->addWidget(Q, 1, 2);
@@ -83,7 +83,6 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     int readOnlyColumns[] = {0, 4, 12,14, 16, 18, 20};
 
     inputQ->setFocus();
-    connect(inputH, &QLineEdit::returnPressed, this, &tableau::AjoutDonne);
 }
 
 
@@ -118,7 +117,8 @@ void tableau::AjoutDonne() {
     float diametre_m = diametre / 1000; // convert mm to m
     float airetuyau = M_PI * pow(diametre_m / 2, 2); // calcul de l'air du tuyau
 
-    float debit_m3 = debit/3600000; // convert l/h -> m3/s
+    float debit_m3 = debit / 3600.0 / 1000.0; // convert l/h -> m3/s
+    float debit_ls = debit / 3600.0; // convert l/h -> l/s
 
 
     if (Materiau->currentText() == "PVC" || Materiau->currentText() == "Polyéthylène") { // Selection des critere selon la matiere
@@ -135,11 +135,12 @@ void tableau::AjoutDonne() {
         b=-4.87;
     }
 
-    float pertecharge = k*pow((debit_m3*1000/3600),a)*pow((diametre_m),b)*longueur; // calcul perte
+    float pertecharge = k*pow(debit_ls,a)*pow((diametre),b)*longueur; // calcul perte
+    std::cout<<pertecharge<<std::endl;
 
     float piezo = pertecharge + hauteur; // calcul piezo
 
-    float vitesse = debit / airetuyau; // calcul vitesse
+    float vitesse = debit_m3 / airetuyau; // calcul vitesse
 
     int numero = _Donnees.size()+1; // numéro
 
@@ -220,7 +221,7 @@ void tableau::AjoutLigne() {
 
         QLineEdit *lineEdit = new QLineEdit(this);
         lineEdit->setReadOnly(true);
-        lineEdit->setText(QString::number(rowData[i])); // Créer un nouveau champ pour chaques nouvelles valeurs de la data
+        lineEdit->setText(QString::number(rowData[i], 'f', 2));
 
         gridLayout->addWidget(lineEdit, ligne, i * 2);
     }
@@ -229,6 +230,53 @@ void tableau::AjoutLigne() {
 
 }
 
+void tableau::focusPreviousInput() {
 
+    if (inputH->hasFocus()) {
+        inputL->setFocus();
+        return;
+    } else if (inputL->hasFocus()) {
+        inputD->setFocus();
+        return;
+    } else if (inputD->hasFocus()){
+        inputQ->setFocus();
+    }
+}
 
+void tableau::focusNextInput() {
+    if (inputQ->hasFocus()) {
+        inputD->setFocus();
+        return;
+    } else if (inputD->hasFocus()) {
+        inputL->setFocus();
+        return;
+    } else if (inputL->hasFocus()){
+        inputH->setFocus();
+    }
+}
+
+void tableau::keyPressEvent(QKeyEvent *event) {
+
+    if (event->key() == Qt::Key_Control) {
+        focusPreviousInput();
+        return;
+    } else if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Return) {
+        if(event->key() == Qt::Key_Return && Allinputfill()){
+            AjoutDonne();
+        } else {
+            focusNextInput();
+        }
+        return;
+    } else {
+        QWidget::keyPressEvent(event);
+    }
+}
+
+bool tableau::Allinputfill() {
+    if (inputD->text().isEmpty() || inputQ->text().isEmpty() ||
+        inputH->text().isEmpty() || inputL->text().isEmpty()) {
+        return false; // At least one input field is empty
+    }
+    return true; // All input fields are filled
+}
 

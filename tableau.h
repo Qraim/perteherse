@@ -4,18 +4,27 @@
 #ifndef PERTEDECHARGEHERSE_TABLEAU_H
 #define PERTEDECHARGEHERSE_TABLEAU_H
 
-#include <QWidget>
-#include <QGridLayout>
-#include <QLabel>
-#include <QFrame>
+#include <QApplication>
+#include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
-#include <vector>
-#include <math.h>
+#include <QHBoxLayout>
+#include <QWidget>
+#include <QLabel>
+#include <QKeyEvent>
+#include <QShortcut>
+#include <QIcon>
+#include <QPixmap>
+#include <QDesktopWidget>
+#include <QFormLayout>
+#include <QDoubleValidator>
 #include <iostream>
 #include <QScrollArea>
 #include <QScrollBar>
-#include <QPushButton>
+
+
+#include <vector>
+#include <math.h>
 
 class tableau : public QWidget {
 Q_OBJECT
@@ -45,6 +54,13 @@ private:
     QComboBox *Materiau;
 
 
+    void focusNextInput();
+
+    void focusPreviousInput();
+
+    void keyPressEvent(QKeyEvent *event);
+
+    bool Allinputfill();
 };
 
 #endif //PERTEDECHARGEHERSE_TABLEAU_H
