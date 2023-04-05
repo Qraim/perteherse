@@ -6,17 +6,40 @@
 
 // tableau.cpp
 
+const int ROW_HEIGHT = 30;
 
 tableau::tableau(QWidget *parent) : QWidget(parent) {
 
-    ligne = 5; // Pour commencer en dessous des inputs
+    ligne = 5;
 
-    gridLayout = new QGridLayout(this);
-    gridLayout->setColumnStretch(11, 1);
-    gridLayout->setSpacing(10);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
+    // Inputs layout and widgets
+    QWidget *inputsWidget = new QWidget(this);
+    QVBoxLayout *inputsLayout = new QVBoxLayout(inputsWidget);
 
+    // Scroll area and scroll widget
+    scrollArea = new QScrollArea(this);
+    scrollWidget = new QWidget(scrollArea);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setWidget(scrollWidget);
+    scrollWidget->setMinimumSize(sizeHint());
 
+    gridLayout = new QGridLayout(scrollWidget);
+    scrollWidget->setLayout(gridLayout);
+
+    // Bottom layout and widgets
+    QWidget *bottomWidget = new QWidget(this);
+    QVBoxLayout *bottomLayout = new QVBoxLayout(bottomWidget);
+
+    // Add inputs layout, scroll area, and bottom layout to the main layout
+    mainLayout->addWidget(inputsWidget);
+    mainLayout->addWidget(scrollArea);
+    mainLayout->addWidget(bottomWidget);
+
+    // Add input fields and labels to fixedInputsLayout
     Materiau = new QComboBox(this);
     Materiau->setFixedSize(75, 25);
     Materiau->addItem("PVC");
@@ -24,7 +47,7 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     Materiau->addItem("Fonte");
     Materiau->addItem("Alu");
 
-    gridLayout->addWidget(Materiau, 0, 0);
+    inputsLayout->addWidget(Materiau);
 
     QLabel *numero = new QLabel("Numéro", this);
     QLabel *Q = new QLabel("Debit (l/h)", this);
@@ -38,52 +61,78 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     QLabel *sigmaJ = new QLabel("Σ Perte ", this);
     QLabel *sigmaP = new QLabel("Σ Piezo ", this);
 
-    gridLayout->addWidget(numero, 1, 0);
-    gridLayout->addWidget(Q, 1, 2);
-    gridLayout->addWidget(sigmaQ, 1, 4);
-    gridLayout->addWidget(D, 1, 6);
-    gridLayout->addWidget(L, 1, 8);
-    gridLayout->addWidget(H, 1, 10);
-    gridLayout->addWidget(V, 1, 12);
-    gridLayout->addWidget(J, 1, 14);
-    gridLayout->addWidget(P, 1, 16);
-    gridLayout->addWidget(sigmaJ, 1, 18);
-    gridLayout->addWidget(sigmaP, 1, 20);
+    // Create QGridLayout for the inputs section
+    QGridLayout *inputsGridLayout = new QGridLayout();
+    inputsLayout->addLayout(inputsGridLayout);
 
-    QFrame *hLine = new QFrame(this);
-    hLine->setFrameShape(QFrame::HLine);
-    hLine->setFrameShadow(QFrame::Sunken);
-    gridLayout->addWidget(hLine, 2, 0, 1, 21);
+// Add labels to inputsGridLayout
+    inputsGridLayout->addWidget(numero, 0, 0);
+    inputsGridLayout->addWidget(Q, 0, 2);
+    inputsGridLayout->addWidget(sigmaQ, 0, 4);
+    inputsGridLayout->addWidget(D, 0, 6);
+    inputsGridLayout->addWidget(L, 0, 8);
+    inputsGridLayout->addWidget(H, 0, 10);
+    inputsGridLayout->addWidget(V, 0, 12);
+    inputsGridLayout->addWidget(J, 0, 14);
+    inputsGridLayout->addWidget(P, 0, 16);
+    inputsGridLayout->addWidget(sigmaJ, 0, 18);
+    inputsGridLayout->addWidget(sigmaP, 0, 20);
 
-    for (int i = 1; i < 21; i += 2) {
-        QFrame *vLine = new QFrame(this);
-        vLine->setFrameShape(QFrame::VLine);
-        vLine->setFrameShadow(QFrame::Sunken);
-        gridLayout->addWidget(vLine, 1, i, 1, 1);
-    }
 
-    // Add input fields under Q, D, L, and H labels
+
+// Initialize input fields
     inputQ = new QLineEdit(this);
     inputD = new QLineEdit(this);
     inputL = new QLineEdit(this);
     inputH = new QLineEdit(this);
 
-    gridLayout->addWidget(inputQ, 3, 2);
-    gridLayout->addWidget(inputD, 3, 6);
-    gridLayout->addWidget(inputL, 3, 8);
-    gridLayout->addWidget(inputH, 3, 10);
+// Add input fields to inputsGridLayout
+    inputsGridLayout->addWidget(inputQ, 1, 2);
+    inputsGridLayout->addWidget(inputD, 1, 6);
+    inputsGridLayout->addWidget(inputL, 1, 8);
+    inputsGridLayout->addWidget(inputH, 1, 10);
 
-    QFrame *hLine2 = new QFrame(this);
-    hLine2->setFrameShape(QFrame::HLine);
-    hLine2->setFrameShadow(QFrame::Sunken);
-    gridLayout->addWidget(hLine2, 4, 0, 1, 21);
+// Add the 3 QLineEdit at the bottom of fixedInputsLayout
+    QLineEdit *lineEdit1 = new QLineEdit(bottomWidget);
+    QLineEdit *lineEdit2 = new QLineEdit(bottomWidget);
+    QLineEdit *lineEdit3 = new QLineEdit(bottomWidget);
 
-    // Add read-only text fields under the other labels
-    QLineEdit *readOnlyFields[7];
-    int readOnlyColumns[] = {0, 4, 12,14, 16, 18, 20};
+// Set the size of the QLineEdit widgets
+    lineEdit1->setMaximumWidth(150);
+    lineEdit2->setMaximumWidth(150);
+    lineEdit3->setMaximumWidth(150);
+
+// Add labels for each QLineEdit
+    QLabel *label1 = new QLabel("Label1:", bottomWidget);
+    QLabel *label2 = new QLabel("Label2:", bottomWidget);
+    QLabel *label3 = new QLabel("Label3:", bottomWidget);
+
+// Create a QHBoxLayout for each QLineEdit and its corresponding label
+    QHBoxLayout *hbox1 = new QHBoxLayout();
+    QHBoxLayout *hbox2 = new QHBoxLayout();
+    QHBoxLayout *hbox3 = new QHBoxLayout();
+
+// Add the labels and QLineEdit widgets to the QHBoxLayouts
+    hbox1->addWidget(label1);
+    hbox1->addWidget(lineEdit1);
+    hbox2->addWidget(label2);
+    hbox2->addWidget(lineEdit2);
+    hbox3->addWidget(label3);
+    hbox3->addWidget(lineEdit3);
+
+// Add the QHBoxLayouts to the bottomLayout
+    bottomLayout->addLayout(hbox1);
+    bottomLayout->addLayout(hbox2);
+    bottomLayout->addLayout(hbox3);
 
     inputQ->setFocus();
+
+// Set the inputsLayout and bottomLayout spacing
+    inputsLayout->setSpacing(10);
+    bottomLayout->setSpacing(10);
 }
+
+
 
 
 /*    for (int i = 0; i < 7; i++) {
@@ -159,39 +208,10 @@ void tableau::AjoutDonne() {
 
     cumul();
 
-    std::cout<<"here"<<std::endl;
-
     AjoutLigne();
 
 }
 
-/*void tableau::cumul() {
-
-    float sigmadebit = 0;
-    float sigmaperte = 0;
-    float sigmapiezo = 0;
-
-
-    for(int i=0; i<_Donnees.size();++i){
-
-        sigmadebit = 0;
-        sigmaperte = 0;
-        sigmapiezo = 0;
-
-        for(int j=0; j<i;j++){
-
-            sigmadebit += _Donnees[j][1];
-            sigmaperte += _Donnees[j][7];
-            sigmapiezo += _Donnees[j][8];
-
-        }
-
-        _Donnees[i][2] = sigmadebit ;
-        _Donnees[i][9] = sigmaperte ;
-        _Donnees[i][10] = sigmapiezo ;
-
-    }
-}*/
 
 void tableau::cumul() {
     float sigmadebit = 0;
@@ -209,7 +229,6 @@ void tableau::cumul() {
     }
 }
 
-
 void tableau::AjoutLigne() {
     if (_Donnees.empty()) {
         return;
@@ -219,16 +238,22 @@ void tableau::AjoutLigne() {
 
     for (int i = 0; i < rowData.size(); ++i) {
 
-        QLineEdit *lineEdit = new QLineEdit(this);
+        QLineEdit *lineEdit = new QLineEdit(scrollWidget); // Change parent from 'this' to 'scrollWidget'
         lineEdit->setReadOnly(true);
         lineEdit->setText(QString::number(rowData[i], 'f', 2));
+        lineEdit->setFixedHeight(ROW_HEIGHT); // Set fixed height for each QLineEdit
 
         gridLayout->addWidget(lineEdit, ligne, i * 2);
     }
 
     ligne++; // Increment the row index for the next line
 
+    // Adjust the height of the scrollWidget based on the number of rows
+    scrollWidget->setMinimumHeight(ligne * ROW_HEIGHT);
+    scrollWidget->setMaximumHeight(ligne * ROW_HEIGHT);
 }
+
+
 
 void tableau::focusPreviousInput() {
 
@@ -257,12 +282,12 @@ void tableau::focusNextInput() {
 
 void tableau::keyPressEvent(QKeyEvent *event) {
 
-    if (event->key() == Qt::Key_Control) {
+    if (event->key() == Qt::Key_Control) { // si control est appuyé
         focusPreviousInput();
         return;
-    } else if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Return) {
+    } else if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Return) { // Si tab ou entrée est appuyé
         if(event->key() == Qt::Key_Return && Allinputfill()){
-            AjoutDonne();
+            AjoutDonne(); // si entrée est appuyé et que toutes les données sont mises
         } else {
             focusNextInput();
         }
@@ -275,8 +300,8 @@ void tableau::keyPressEvent(QKeyEvent *event) {
 bool tableau::Allinputfill() {
     if (inputD->text().isEmpty() || inputQ->text().isEmpty() ||
         inputH->text().isEmpty() || inputL->text().isEmpty()) {
-        return false; // At least one input field is empty
+        return false; // Si au moins 1 est vide
     }
-    return true; // All input fields are filled
+    return true; // Tout les inputs sont remplis
 }
 

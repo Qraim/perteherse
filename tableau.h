@@ -34,25 +34,24 @@ public:
     ~tableau();
 
 private:
-    QGridLayout *gridLayout;
-    QScrollArea *scrollArea;
-    QWidget* scrollWidget;
 
-
-    void AjoutDonne();
-
-    void cumul();
-
-    void AjoutLigne();
-
-    std::vector<std::vector<float>> _Donnees;
     int ligne;
     QLineEdit *inputD;
     QLineEdit *inputQ;
     QLineEdit *inputH;
     QLineEdit *inputL;
     QComboBox *Materiau;
+    QGridLayout *gridLayout;
+    QScrollArea *scrollArea;
+    QWidget* scrollWidget;
 
+    std::vector<std::vector<float>> _Donnees;
+
+    void AjoutDonne();
+
+    void cumul();
+
+    void AjoutLigne();
 
     void focusNextInput();
 
@@ -61,6 +60,7 @@ private:
     void keyPressEvent(QKeyEvent *event);
 
     bool Allinputfill();
+
 };
 
 #endif //PERTEDECHARGEHERSE_TABLEAU_H
