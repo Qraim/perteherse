@@ -8,9 +8,14 @@
 
 
 tableau::tableau(QWidget *parent) : QWidget(parent) {
+
+    ligne = 5; // Pour commencer en dessous des inputs
+
     gridLayout = new QGridLayout(this);
     gridLayout->setColumnStretch(11, 1);
     gridLayout->setSpacing(10);
+
+
 
     Materiau = new QComboBox(this);
     Materiau->setFixedSize(75, 25);
@@ -68,11 +73,17 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     gridLayout->addWidget(inputL, 3, 8);
     gridLayout->addWidget(inputH, 3, 10);
 
+    QFrame *hLine2 = new QFrame(this);
+    hLine2->setFrameShape(QFrame::HLine);
+    hLine2->setFrameShadow(QFrame::Sunken);
+    gridLayout->addWidget(hLine2, 4, 0, 1, 21);
+
     // Add read-only text fields under the other labels
     QLineEdit *readOnlyFields[7];
     int readOnlyColumns[] = {0, 4, 12,14, 16, 18, 20};
 
     inputQ->setFocus();
+    connect(inputH, &QLineEdit::returnPressed, this, &tableau::AjoutDonne);
 }
 
 
@@ -89,6 +100,7 @@ tableau::~tableau() {
     delete inputH;
     delete inputL;
     delete inputQ;
+    delete Materiau;
 }
 
 
@@ -131,7 +143,7 @@ void tableau::AjoutDonne() {
 
     int numero = _Donnees.size()+1; // numéro
 
-    std::vector<float> temp; // variable temp
+    std::vector<float> temp(11, 0.0f); // variable temporaire
 
     temp[0] = numero;
     temp[1] = debit;
@@ -143,6 +155,12 @@ void tableau::AjoutDonne() {
     temp[8] = piezo;
 
     _Donnees.push_back(temp); // mise dans le set des données
+
+    cumul();
+
+    std::cout<<"here"<<std::endl;
+
+    AjoutLigne();
 
 }
 
@@ -172,7 +190,6 @@ void tableau::AjoutDonne() {
         _Donnees[i][10] = sigmapiezo ;
 
     }
-
 }*/
 
 void tableau::cumul() {
@@ -191,6 +208,26 @@ void tableau::cumul() {
     }
 }
 
+
+void tableau::AjoutLigne() {
+    if (_Donnees.empty()) {
+        return;
+    }
+
+    const std::vector<float> &rowData = _Donnees.back();
+
+    for (int i = 0; i < rowData.size(); ++i) {
+
+        QLineEdit *lineEdit = new QLineEdit(this);
+        lineEdit->setReadOnly(true);
+        lineEdit->setText(QString::number(rowData[i])); // Créer un nouveau champ pour chaques nouvelles valeurs de la data
+
+        gridLayout->addWidget(lineEdit, ligne, i * 2);
+    }
+
+    ligne++; // Increment the row index for the next line
+
+}
 
 
 

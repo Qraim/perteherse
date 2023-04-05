@@ -12,6 +12,10 @@
 #include <QLineEdit>
 #include <vector>
 #include <math.h>
+#include <iostream>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QPushButton>
 
 class tableau : public QWidget {
 Q_OBJECT
@@ -22,12 +26,18 @@ public:
 
 private:
     QGridLayout *gridLayout;
+    QScrollArea *scrollArea;
+    QWidget* scrollWidget;
+
 
     void AjoutDonne();
 
     void cumul();
 
+    void AjoutLigne();
+
     std::vector<std::vector<float>> _Donnees;
+    int ligne;
     QLineEdit *inputD;
     QLineEdit *inputQ;
     QLineEdit *inputH;
