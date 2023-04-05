@@ -69,6 +69,7 @@ private:
 
     void RafraichirTableau();
 
+    void clearchild();
 };
 
 #endif //PERTEDECHARGEHERSE_TABLEAU_H

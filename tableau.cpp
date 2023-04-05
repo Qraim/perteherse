@@ -267,11 +267,21 @@ void tableau::keyPressEvent(QKeyEvent *event) {
             focusNextInput();
         }
         return;
+    } else if(event->key() == Qt::Key_E){
+        clearchild();
+    } else if(event->key() == Qt::Key_R){
+
+        if(_Donnees.size() > 0){ // Vérifier s'il y a des données
+            std::vector<float> lastRow = _Donnees[_Donnees.size() - 1]; // Obtenir la dernière ligne
+            _Donnees.push_back(lastRow); // Ajouter la dernière ligne à la fin
+            RafraichirTableau(); // Rafraîchir le tableau
+
+        }
     } else {
         QWidget::keyPressEvent(event);
     }
-
 }
+
 
 bool tableau::Allinputfill() {
     if (inputD->text().isEmpty() || inputQ->text().isEmpty() ||
@@ -310,7 +320,8 @@ void tableau::calcul() {
         _Donnees[i][2] = sigmadebit;
     }
 
-    if (Materiau->currentText() == "PVC" || Materiau->currentText() == "Polyéthylène") { // Selection des critere selon la matiere
+
+    if (Materiau->currentText() == "PVC" || Materiau->currentText() == "PN") { // Selection des critere selon la matiere
         k=831743.11;
         a = 1.75;
         b=-4.75;
@@ -318,7 +329,7 @@ void tableau::calcul() {
         k=1458844.82;
         a = 1.83;
         b=-4.89;
-    } else if (Materiau->currentText() == "Aluminium") {
+    } else if (Materiau->currentText() == "Alu") {
         k=1707785.38;
         a = 1.89;
         b=-4.87;
@@ -337,15 +348,21 @@ void tableau::calcul() {
 
         vitesse = debit_m3 / airetuyau ; // calcul vitesse
 
-        debit_ls = debit / 3600.0; // convert l/h -> l/s
+        float sigmadebit_ls = sigmadebit /3600.0; // convert l/h -> l/s
 
-        pertecharge = k*pow(debit_ls,a)*pow((diametre),b)*longueur;  // calcul perte
+        pertecharge = k * pow(sigmadebit_ls,a)*pow(diametre,b)*longueur;// calcul perte
+        std::cout<<pertecharge<<std::endl;
+
 
         piezo = pertecharge + hauteur; // calcul piezo
 
-        _Donnees[i][6]=vitesse;
-        _Donnees[i][7]=pertecharge;
-        _Donnees[i][8]=piezo;
+
+
+
+
+        _Donnees[i][6] = vitesse;
+        _Donnees[i][7] = pertecharge;
+        _Donnees[i][8] = piezo;
 
     }
 
@@ -354,19 +371,16 @@ void tableau::calcul() {
         sigmapiezo += _Donnees[i][8];
 
         _Donnees[i][9] = sigmaperte;
-        _Donnees[i][10] = sigmaperte;
+        _Donnees[i][10] = sigmapiezo;
     }
 
     RafraichirTableau();
 }
 
+
 void tableau::RafraichirTableau() {
     // Clear all widgets from the scroll area
-    QLayoutItem *child;
-    while ((child = gridLayout->takeAt(0)) != 0) {
-        delete child->widget();
-        delete child;
-    }
+    clearchild();
 
     // Re-add the column headers
     const QStringList headers = {"Numero", "Debit","ΣDebit", "Diametre", "Longueur", "Hauteur", "Vitesse", "Perte de charge", "Piezo", "ΣPerte", "ΣPiezo"};
@@ -382,19 +396,23 @@ void tableau::RafraichirTableau() {
     // Add the data to the scroll area
     for (const std::vector<float> &rowData : _Donnees) {
         const std::vector<int> columnIndices = {0, 1, 2,3,4,5,6,7,8,9,10};
+        bool redText = (rowData[6] > 2);
 
         for (int i = 0; i < columnIndices.size(); ++i) {
             QLineEdit *lineEdit = new QLineEdit(scrollWidget);
             lineEdit->setReadOnly(true);
+            lineEdit->setAlignment(Qt::AlignCenter);
+            lineEdit->setFixedSize(150, 40);
 
             if (i == 0) {
                 lineEdit->setText(QString::number(rowData[i], 'f', 0));
+            } else if (i == 6 && redText) {
+                lineEdit->setStyleSheet("QLineEdit { background-color : red; color : white; }");
+                lineEdit->setText(QString::number(rowData[columnIndices[i]], 'f', 2));
             } else {
                 lineEdit->setText(QString::number(rowData[columnIndices[i]], 'f', 2));
             }
-
-            lineEdit->setAlignment(Qt::AlignCenter);
-            lineEdit->setFixedSize(150, 40);
+            gridLayout->setVerticalSpacing(10);
             gridLayout->addWidget(lineEdit, ligne, columnIndices[i]);
         }
 
@@ -409,3 +427,13 @@ void tableau::RafraichirTableau() {
     // Align the grid layout to the top
     gridLayout->setAlignment(Qt::AlignTop);
 }
+
+void tableau::clearchild() {
+    QLayoutItem *child;
+    while ((child = gridLayout->takeAt(0)) != 0) {
+        delete child->widget();
+        delete child;
+    }
+
+}
+
