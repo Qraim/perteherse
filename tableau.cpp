@@ -16,7 +16,7 @@ void espacementcolonne(QGridLayout *layout) {
 
 tableau::tableau(QWidget *parent) : QWidget(parent) {
 
-    ligne = 5;
+    ligne = 1;
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -40,8 +40,40 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     QWidget *bottomWidget = new QWidget(this);
     QVBoxLayout *bottomLayout = new QVBoxLayout(bottomWidget);
 
+// Headers widget and layout
+    QWidget *headersWidget = new QWidget(this);
+    QGridLayout *headersGridLayout = new QGridLayout(headersWidget);
+
+    // Add the column headers
+// Add the column headers
+    const QStringList headers = {"Numero", "Debit", "ΣDebit", "Diametre", "Longueur ", "Hauteur", "Vitesse", "Perte", "Piezo", "ΣPerte", "ΣPiezo"};
+
+    for (int i = 0; i < headers.size(); ++i) {
+        QLabel *label = new QLabel(headers[i], headersWidget);
+        label->setAlignment(Qt::AlignCenter);
+        label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        label->setFixedHeight(40); // Set only fixed height
+        headersGridLayout->addWidget(label, 0, i);
+        headersGridLayout->setHorizontalSpacing(0); // Remove spacing between headers
+    }
+
+// Add the units below the column headers
+    const QStringList units = {"", "l/h", "l/h", "mm", "m", "m", "m/s", "m", "m", "m", "m"};
+
+    for (int i = 0; i < units.size(); ++i) {
+        QLabel *unitLabel = new QLabel(units[i], headersWidget);
+        unitLabel->setAlignment(Qt::AlignCenter);
+        unitLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        unitLabel->setFixedHeight(40); // Set only fixed height
+        headersGridLayout->addWidget(unitLabel, 1, i); // Add the unit labels in the second row of the headersGridLayout
+    }
+
+
+
+
     // Add inputs layout, scroll area, and bottom layout to the main layout
     mainLayout->addWidget(inputsWidget);
+    mainLayout->addWidget(headersWidget);
     mainLayout->addWidget(scrollArea);
     mainLayout->addWidget(bottomWidget);
 
@@ -55,34 +87,27 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
 
     inputsLayout->addWidget(Materiau);
 
-    QLabel *numero = new QLabel("Numéro", this);
     QLabel *Q = new QLabel("Debit (l/h)", this);
-    QLabel *sigmaQ = new QLabel("Σ Debit", this);
     QLabel *D = new QLabel("Diametre (mm)", this);
     QLabel *L = new QLabel("Longueur (m)", this);
     QLabel *H = new QLabel("Hauteur (m)", this);
-    QLabel *V = new QLabel("Vitesse (m/s)", this);
-    QLabel *J = new QLabel("Perte de charge (m)", this);
-    QLabel *P = new QLabel("Piezo (m)", this);
-    QLabel *sigmaJ = new QLabel("Σ Perte ", this);
-    QLabel *sigmaP = new QLabel("Σ Piezo ", this);
+
 
     // Create QGridLayout for the inputs section
     QGridLayout *inputsGridLayout = new QGridLayout();
     inputsLayout->addLayout(inputsGridLayout);
 
+    // Add horizontal spacers to center the input fields and labels
+    inputsGridLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 0);
+    inputsGridLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 8);
+
+
     // Add labels to inputsGridLayout
-    inputsGridLayout->addWidget(numero, 0, 0);
-    inputsGridLayout->addWidget(Q, 0, 2);
-    inputsGridLayout->addWidget(sigmaQ, 0, 4);
-    inputsGridLayout->addWidget(D, 0, 6);
-    inputsGridLayout->addWidget(L, 0, 8);
-    inputsGridLayout->addWidget(H, 0, 10);
-    inputsGridLayout->addWidget(V, 0, 12);
-    inputsGridLayout->addWidget(J, 0, 14);
-    inputsGridLayout->addWidget(P, 0, 16);
-    inputsGridLayout->addWidget(sigmaJ, 0, 18);
-    inputsGridLayout->addWidget(sigmaP, 0, 20);
+    inputsGridLayout->addWidget(Q, 0, 1);
+    inputsGridLayout->addWidget(D, 0, 3);
+    inputsGridLayout->addWidget(L, 0, 5);
+    inputsGridLayout->addWidget(H, 0, 7);
+
 
     // Initialize input fields
     inputQ = new QLineEdit(this);
@@ -90,52 +115,69 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     inputL = new QLineEdit(this);
     inputH = new QLineEdit(this);
 
-    // Add input fields to inputsGridLayout
-    inputsGridLayout->addWidget(inputQ, 1, 2);
-    inputsGridLayout->addWidget(inputD, 1, 6);
-    inputsGridLayout->addWidget(inputL, 1, 8);
-    inputsGridLayout->addWidget(inputH, 1, 10);
+    inputQ->setMaximumWidth(75);
+    inputD->setMaximumWidth(75);
+    inputL->setMaximumWidth(75);
+    inputH->setMaximumWidth(75);
 
-// Call the function to set the column widths for inputsGridLayout
+
+    // Add input fields to inputsGridLayout
+    inputsGridLayout->addWidget(inputQ, 1, 1);
+    inputsGridLayout->addWidget(inputD, 1, 3);
+    inputsGridLayout->addWidget(inputL, 1, 5);
+    inputsGridLayout->addWidget(inputH, 1, 7);
+
+    inputQ->setAlignment(Qt::AlignRight);
+    inputD->setAlignment(Qt::AlignRight);
+    inputL->setAlignment(Qt::AlignRight);
+    inputH->setAlignment(Qt::AlignRight);
+
+    inputsGridLayout->setSpacing(5);
+
+    // Call the function to set the column widths for inputsGridLayout
     espacementcolonne(inputsGridLayout);
 
-// Call the function to set the column widths for gridLayout
+    // Call the function to set the column widths for gridLayout
     espacementcolonne(gridLayout);
 
-// Add the 3 QLineEdit at the bottom of fixedInputsLayout
-    lineEdit1 = new QLineEdit(bottomWidget);
-    lineEdit2 = new QLineEdit(bottomWidget);
-    lineEdit3 = new QLineEdit(bottomWidget);
-    lineEdit4 = new QLineEdit(bottomWidget);
+    // Add the 3 QLineEdit at the bottom of fixedInputsLayout
+    sigmadebitcase = new QLineEdit(bottomWidget);
+    sigmalongueurcase = new QLineEdit(bottomWidget);
+    sigmapertecase = new QLineEdit(bottomWidget);
+    sigmapiezocase = new QLineEdit(bottomWidget);
 
-// Set the size of the QLineEdit widgets
-    lineEdit1->setMaximumWidth(150);
-    lineEdit2->setMaximumWidth(150);
-    lineEdit3->setMaximumWidth(150);
-    lineEdit4->setMaximumWidth(150);
+    // Set the size of the QLineEdit widgets
+    sigmadebitcase->setMaximumWidth(100);
+    sigmalongueurcase->setMaximumWidth(100);
+    sigmapertecase->setMaximumWidth(100);
+    sigmapiezocase->setMaximumWidth(100);
 
+    sigmadebitcase->setAlignment(Qt::AlignRight);
+    sigmalongueurcase->setAlignment(Qt::AlignRight);
+    sigmapertecase->setAlignment(Qt::AlignRight);
+    sigmapiezocase->setAlignment(Qt::AlignRight);
 
-// Add labels for each QLineEdit
-    QLabel *label1 = new QLabel("Débit cumulé:", bottomWidget);
-    QLabel *label2 = new QLabel("Label2:", bottomWidget);
-    QLabel *label3 = new QLabel("Label3:", bottomWidget);
-    QLabel *label4 = new QLabel("Label4:", bottomWidget);
+    // Add labels for each QLineEdit
+    QLabel *label1 = new QLabel("Débit cumulé :", bottomWidget);
+    QLabel *label2 = new QLabel("Volume cumulé :", bottomWidget);
+    QLabel *label3 = new QLabel("Perte cumulé :", bottomWidget);
+    QLabel *label4 = new QLabel("Piezo cumulé :", bottomWidget);
 
-// Create a QHBoxLayout for each QLineEdit and its corresponding label
+    // Create a QHBoxLayout for each QLineEdit and its corresponding label
     QHBoxLayout *hbox1 = new QHBoxLayout();
     QHBoxLayout *hbox2 = new QHBoxLayout();
     QHBoxLayout *hbox3 = new QHBoxLayout();
     QHBoxLayout *hbox4 = new QHBoxLayout();
 
-// Add the labels and QLineEdit widgets to the QHBoxLayouts
+    // Add the labels and QLineEdit widgets to the QHBoxLayouts
     hbox1->addWidget(label1);
-    hbox1->addWidget(lineEdit1);
+    hbox1->addWidget(sigmadebitcase);
     hbox2->addWidget(label2);
-    hbox2->addWidget(lineEdit2);
+    hbox2->addWidget(sigmalongueurcase);
     hbox3->addWidget(label3);
-    hbox3->addWidget(lineEdit3);
+    hbox3->addWidget(sigmapertecase);
     hbox4->addWidget(label4);
-    hbox4->addWidget(lineEdit4);
+    hbox4->addWidget(sigmapiezocase);
 
 // Add the QHBoxLayouts to the bottomLayout
     bottomLayout->addLayout(hbox1);
@@ -143,9 +185,14 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     bottomLayout->addLayout(hbox3);
     bottomLayout->addLayout(hbox4);
 
+    inputQ->setValidator(new QDoubleValidator(0.000001, 1000000, 6, this));
+    inputD->setValidator(new QDoubleValidator(0.000001, 1000000, 6, this));
+    inputL->setValidator(new QDoubleValidator(0.000001, 1000000, 6, this));
+    inputH->setValidator(new QDoubleValidator(0.000001, 1000000, 6, this));
+
     inputQ->setFocus();
 
-// Set the inputsLayout and bottomLayout spacing
+    // Set the inputsLayout and bottomLayout spacing
     inputsLayout->setSpacing(10);
     bottomLayout->setSpacing(5);
 }
@@ -185,6 +232,7 @@ void tableau::AjoutDonne() {
 }
 
 void tableau::AjoutLigne() {
+
     if (_Donnees.empty()) {
         return;
     }
@@ -192,27 +240,27 @@ void tableau::AjoutLigne() {
     const std::vector<float> &rowData = _Donnees.back();
 
     // Specify the column numbers corresponding to the inputs above
-    const std::vector<int> columnIndices = {0, 1, 3, 4, 5, 2, 6, 7, 8, 9, 10};
+    const std::vector<int> columnIndices = {0, 1, -1, 3, 4, 5, -1, -1, -1, -1, -1};
 
     for (int i = 0; i < columnIndices.size(); ++i) {
 
         QLineEdit *lineEdit = new QLineEdit(scrollWidget);
         lineEdit->setReadOnly(true);
+        lineEdit->setAlignment(Qt::AlignCenter);
+        lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed); // Set horizontal size policy to Expanding
+        lineEdit->setFixedHeight(40); // Set only fixed height
 
-        if (i == 0) {
-            lineEdit->setText(QString::number(rowData[i], 'f', 0));
-        } else if (i < 5) {
-            lineEdit->setText(QString::number(rowData[columnIndices[i]], 'f', 2));
-            lineEdit->setAlignment(Qt::AlignCenter);
+        if (columnIndices[i] != -1) {
+            if (i == 0) {
+                lineEdit->setText(QString::number(rowData[i], 'f', 0));
+            } else {
+                lineEdit->setText(QString::number(rowData[columnIndices[i]], 'f', 2));
+            }
         } else {
-            lineEdit->setAlignment(Qt::AlignCenter);
+            lineEdit->setText(""); // Empty case for other columns
         }
 
-        // Set the same width and height for all QLineEdit widgets
-        lineEdit->setFixedSize(100, 40);
-
-        // Adjust the column index to match the corresponding label
-        gridLayout->addWidget(lineEdit, ligne, columnIndices[i]);
+        gridLayout->addWidget(lineEdit, ligne, i);
     }
 
     ligne++; // Increment the row index for the next line
@@ -222,9 +270,14 @@ void tableau::AjoutLigne() {
     scrollWidget->setMinimumHeight(scrollWidgetHeight);
     scrollWidget->setMaximumHeight(scrollWidgetHeight);
 
-    // Align the grid layout to the top
+    // Set the vertical spacing and align the grid layout to the top
+    gridLayout->setVerticalSpacing(15);
     gridLayout->setAlignment(Qt::AlignTop);
 }
+
+
+
+
 
 
 void tableau::focusPreviousInput() {
@@ -268,15 +321,16 @@ void tableau::keyPressEvent(QKeyEvent *event) {
         }
         return;
     } else if(event->key() == Qt::Key_E){
+        _Donnees.clear();
         clearchild();
     } else if(event->key() == Qt::Key_R){
-
         if(_Donnees.size() > 0){ // Vérifier s'il y a des données
-            std::vector<float> lastRow = _Donnees[_Donnees.size() - 1]; // Obtenir la dernière ligne
-            _Donnees.push_back(lastRow); // Ajouter la dernière ligne à la fin
-            RafraichirTableau(); // Rafraîchir le tableau
-
+            recopiederniereligne();
         }
+    } else if(event->key() == Qt::Key_M){
+        showUpdateDialog();
+    } else if(event->key() == Qt::Key_Z){
+        enleverLigne();
     } else {
         QWidget::keyPressEvent(event);
     }
@@ -315,6 +369,8 @@ void tableau::calcul() {
     float sigmapiezo =0;
     float sigmaperte = 0;
 
+    float sigmalongueur = 0;
+
     for (int i = 0; i < _Donnees.size(); ++i) {
         sigmadebit += _Donnees[i][1];
         _Donnees[i][2] = sigmadebit;
@@ -351,14 +407,8 @@ void tableau::calcul() {
         float sigmadebit_ls = sigmadebit /3600.0; // convert l/h -> l/s
 
         pertecharge = k * pow(sigmadebit_ls,a)*pow(diametre,b)*longueur;// calcul perte
-        std::cout<<pertecharge<<std::endl;
-
 
         piezo = pertecharge + hauteur; // calcul piezo
-
-
-
-
 
         _Donnees[i][6] = vitesse;
         _Donnees[i][7] = pertecharge;
@@ -369,10 +419,24 @@ void tableau::calcul() {
     for (int i = 0; i < _Donnees.size(); ++i) {
         sigmaperte += _Donnees[i][7];
         sigmapiezo += _Donnees[i][8];
+        sigmalongueur += _Donnees[i][4];
+
 
         _Donnees[i][9] = sigmaperte;
         _Donnees[i][10] = sigmapiezo;
     }
+
+    sigmadebitcase->setText(QString::number(sigmadebit, 'f', 2));
+    sigmadebitcase->setAlignment(Qt::AlignCenter);
+
+    sigmalongueurcase->setText(QString::number(sigmalongueur, 'f', 2));
+    sigmalongueurcase->setAlignment(Qt::AlignCenter);
+
+    sigmapertecase->setText(QString::number(sigmaperte, 'f', 2));
+    sigmapertecase->setAlignment(Qt::AlignCenter);
+
+    sigmapiezocase->setText(QString::number(sigmapiezo, 'f', 2));
+    sigmapiezocase->setAlignment(Qt::AlignCenter);
 
     RafraichirTableau();
 }
@@ -382,27 +446,37 @@ void tableau::RafraichirTableau() {
     // Clear all widgets from the scroll area
     clearchild();
 
-    // Re-add the column headers
-    const QStringList headers = {"Numero", "Debit","ΣDebit", "Diametre", "Longueur", "Hauteur", "Vitesse", "Perte de charge", "Piezo", "ΣPerte", "ΣPiezo"};
-    for (int i = 0; i < headers.size(); ++i) {
-        QLabel *label = new QLabel(headers[i], scrollWidget);
-        label->setAlignment(Qt::AlignCenter);
-        label->setFixedSize(150, 40);
-        gridLayout->addWidget(label, 0, i);
+    ligne = 1;
+
+    // Calculate the total cumulative flow rate
+    float totalCumulativeFlowRate = 0.0f;
+    for (const std::vector<float> &rowData : _Donnees) {
+        totalCumulativeFlowRate += rowData[2];
     }
 
-    ligne = 1;
+    // Find the index of the row where the cumulative flow rate is greater than or equal to half of the total cumulative flow rate
+    float cumulativeFlowRate = _Donnees[_Donnees.size()-1][2];
+    float halfFlowRate = cumulativeFlowRate/2;
+    float halfFlowRateRowIndex = 0;
+
+    for (int i = 0; i < _Donnees.size(); ++i) {
+        if (_Donnees[i][2]>halfFlowRate) {
+            halfFlowRateRowIndex = i;
+            break;
+        }
+    }
 
     // Add the data to the scroll area
     for (const std::vector<float> &rowData : _Donnees) {
-        const std::vector<int> columnIndices = {0, 1, 2,3,4,5,6,7,8,9,10};
+        const std::vector<int> columnIndices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         bool redText = (rowData[6] > 2);
 
         for (int i = 0; i < columnIndices.size(); ++i) {
             QLineEdit *lineEdit = new QLineEdit(scrollWidget);
             lineEdit->setReadOnly(true);
             lineEdit->setAlignment(Qt::AlignCenter);
-            lineEdit->setFixedSize(150, 40);
+            lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed); // Set horizontal size policy to Expanding
+            lineEdit->setFixedHeight(40); // Set only fixed height
 
             if (i == 0) {
                 lineEdit->setText(QString::number(rowData[i], 'f', 0));
@@ -412,6 +486,12 @@ void tableau::RafraichirTableau() {
             } else {
                 lineEdit->setText(QString::number(rowData[columnIndices[i]], 'f', 2));
             }
+
+            // Set the background color to orange for the row where the cumulative flow rate is greater than or equal to half of the total cumulative flow rate
+            if (ligne - 1 == halfFlowRateRowIndex) {
+                lineEdit->setStyleSheet("QLineEdit { background-color : orange; }");
+            }
+
             gridLayout->setVerticalSpacing(10);
             gridLayout->addWidget(lineEdit, ligne, columnIndices[i]);
         }
@@ -423,10 +503,13 @@ void tableau::RafraichirTableau() {
     int scrollWidgetHeight = ligne * ROW_HEIGHT;
     scrollWidget->setMinimumHeight(scrollWidgetHeight);
     scrollWidget->setMaximumHeight(scrollWidgetHeight);
+    gridLayout->setVerticalSpacing(15);
 
     // Align the grid layout to the top
     gridLayout->setAlignment(Qt::AlignTop);
 }
+
+
 
 void tableau::clearchild() {
     QLayoutItem *child;
@@ -434,6 +517,146 @@ void tableau::clearchild() {
         delete child->widget();
         delete child;
     }
-
+    scrollWidget->setMinimumHeight(0);
+    scrollWidget->setMaximumHeight(0);
 }
+
+
+void tableau::recopiederniereligne() {
+
+    int taille =_Donnees.size();
+    std::vector<float> lastline = _Donnees[taille-1]; // Pour avoir la derniere ligne du vecteur
+    std::vector<float> recopie(11, 0.0f);
+
+    recopie[0] = lastline[0]+1;
+    recopie[1] = lastline[1];
+    recopie[3] = lastline[3];
+    recopie[4] = lastline[4];
+    recopie[5] = lastline[5];
+
+    _Donnees.push_back(recopie);
+    AjoutLigne();
+}
+
+
+void tableau::showUpdateDialog() {
+    QDialog *updateDialog = new QDialog(this);
+    updateDialog->setWindowTitle("Modifier ligne");
+
+    QFormLayout *formLayout = new QFormLayout(updateDialog);
+
+    QLineEdit *rowNumberLineEdit = new QLineEdit(updateDialog);
+    rowNumberLineEdit->setValidator(new QIntValidator(0, _Donnees.size() - 1, updateDialog));
+    formLayout->addRow("Ligne :", rowNumberLineEdit);
+
+    QLineEdit *debitLineEdit = new QLineEdit(updateDialog);
+    formLayout->addRow("Debit:", debitLineEdit);
+
+    QLineEdit *diameterLineEdit = new QLineEdit(updateDialog);
+    formLayout->addRow("Diametre :", diameterLineEdit);
+
+    QLineEdit *lengthLineEdit = new QLineEdit(updateDialog);
+    formLayout->addRow("Longueur :", lengthLineEdit);
+
+    QLineEdit *heightLineEdit = new QLineEdit(updateDialog);
+    formLayout->addRow("Hauteur :", heightLineEdit);
+
+    QPushButton *updateButton = new QPushButton("Update", updateDialog);
+    formLayout->addWidget(updateButton);
+
+    auto handleEnterKeyPress = [](QLineEdit *current, QLineEdit *next) {
+        QObject::connect(current, &QLineEdit::returnPressed, [current, next]() {
+            if (!current->text().isEmpty() && (next == nullptr || !next->text().isEmpty())) {
+                if (next) {
+                    next->setFocus();
+                }
+            }
+        });
+    };
+
+    handleEnterKeyPress(rowNumberLineEdit, debitLineEdit);
+    handleEnterKeyPress(debitLineEdit, diameterLineEdit);
+    handleEnterKeyPress(diameterLineEdit, lengthLineEdit);
+    handleEnterKeyPress(lengthLineEdit, heightLineEdit);
+    handleEnterKeyPress(heightLineEdit, nullptr);
+
+    auto updateDataAndClose = [this, rowNumberLineEdit, debitLineEdit, diameterLineEdit, lengthLineEdit, heightLineEdit, updateDialog]() {
+        int rowNumber = rowNumberLineEdit->text().toInt();
+        float debit = debitLineEdit->text().toFloat();
+        float diameter = diameterLineEdit->text().toFloat();
+        float length = lengthLineEdit->text().toFloat();
+        float height = heightLineEdit->text().toFloat();
+
+        updateData(rowNumber, debit, diameter, length, height);
+        updateDialog->close();
+    };
+
+    connect(updateButton, &QPushButton::clicked, updateDataAndClose);
+
+    // Add a QShortcut to trigger update when Enter is pressed
+    QShortcut *enterShortcut = new QShortcut(QKeySequence(Qt::Key_Enter), updateDialog);
+    QShortcut *returnShortcut = new QShortcut(QKeySequence(Qt::Key_Return), updateDialog);
+    connect(enterShortcut, &QShortcut::activated, updateDataAndClose);
+    connect(returnShortcut, &QShortcut::activated, updateDataAndClose);
+
+    updateDialog->setLayout(formLayout);
+    updateDialog->exec();
+}
+
+
+void tableau::updateData(int rowNumber, float debit, float diameter, float length, float height) {
+    if (rowNumber >= 0 && rowNumber < _Donnees.size()) {
+        rowNumber-=1;
+        _Donnees[rowNumber][1] = debit;
+        _Donnees[rowNumber][3] = diameter;
+        _Donnees[rowNumber][4] = length;
+        _Donnees[rowNumber][5] = height;
+
+        // Recalculate and refresh the table.
+        calcul();
+        RafraichirTableau();
+    }
+}
+
+void tableau::enleverLigne() {
+    // Create a new dialog for inputting the row number
+    QDialog *deleteDialog = new QDialog(this);
+    deleteDialog->setWindowTitle("Supprimer une ligne");
+    deleteDialog->setFixedSize(300, 100);
+
+    // Add a label and line edit for inputting the row number
+    QLabel *rowNumberLabel = new QLabel("Numéro de ligne :", deleteDialog);
+    QLineEdit *rowNumberLineEdit = new QLineEdit(deleteDialog);
+    rowNumberLineEdit->setValidator(new QIntValidator(1, _Donnees.size(), deleteDialog)); // Only allow integers within the range of the data
+    rowNumberLineEdit->setFixedWidth(50);
+
+    // Add a button to confirm the deletion
+    QPushButton *deleteButton = new QPushButton("Supprimer", deleteDialog);
+    connect(deleteButton, &QPushButton::clicked, [this, rowNumberLineEdit, deleteDialog]() {
+        int rowNumber = rowNumberLineEdit->text().toInt() - 1;
+        if (rowNumber >= 0 && rowNumber < _Donnees.size()) {
+            _Donnees.erase(_Donnees.begin() + rowNumber); // Remove the row from the data
+            // Reassign line numbers starting from the deleted row
+            for (int i = rowNumber; i < _Donnees.size(); ++i) {
+                _Donnees[i][0] = i + 1;
+            }
+            RafraichirTableau(); // Refresh the table display
+        }
+        deleteDialog->close();
+    });
+
+    // Add a layout to the dialog
+    QVBoxLayout *layout = new QVBoxLayout(deleteDialog);
+    layout->addWidget(rowNumberLabel);
+    layout->addWidget(rowNumberLineEdit);
+    layout->addWidget(deleteButton);
+    layout->setAlignment(Qt::AlignCenter);
+
+    // Show the dialog
+    deleteDialog->exec();
+
+    calcul();
+    RafraichirTableau();
+}
+
 

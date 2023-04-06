@@ -21,6 +21,7 @@
 #include <iostream>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QDialog>
 
 
 #include <vector>
@@ -36,6 +37,7 @@ public:
 private:
 
     int ligne;
+
     QLineEdit *inputD;
     QLineEdit *inputQ;
     QLineEdit *inputH;
@@ -45,11 +47,10 @@ private:
     QScrollArea *scrollArea;
     QWidget* scrollWidget;
 
-    QLineEdit *lineEdit1;
-    QLineEdit *lineEdit2;
-    QLineEdit *lineEdit3;
-    QLineEdit *lineEdit4;
-
+    QLineEdit *sigmadebitcase;
+    QLineEdit *sigmalongueurcase;
+    QLineEdit *sigmapertecase;
+    QLineEdit *sigmapiezocase;
 
     std::vector<std::vector<float>> _Donnees;
 
@@ -70,6 +71,14 @@ private:
     void RafraichirTableau();
 
     void clearchild();
+
+    void recopiederniereligne();
+
+    void showUpdateDialog();
+
+    void updateData(int rowNumber, float debit, float diameter, float length, float height);
+
+    void enleverLigne();
 };
 
 #endif //PERTEDECHARGEHERSE_TABLEAU_H
