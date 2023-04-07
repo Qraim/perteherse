@@ -4,15 +4,16 @@
 
 #include "tableau.h"
 
-// tableau.cpp
 
 const int ROW_HEIGHT = 40;
 
-void espacementcolonne(QGridLayout *layout) {
+void espacementColonne(QGridLayout *layout) {
+    // Parcourt toutes les colonnes du layout
     for (int i = 0; i < layout->columnCount(); i++) {
-        layout->setColumnStretch(i, 1);
+        layout->setColumnStretch(i, 1); // Étire la colonne i avec une proportion de 1
     }
 }
+
 
 tableau::tableau(QWidget *parent) : QWidget(parent) {
 
@@ -20,11 +21,11 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    // Inputs layout and widgets
+    // Inpout layout et widget
     QWidget *inputsWidget = new QWidget(this);
     QVBoxLayout *inputsLayout = new QVBoxLayout(inputsWidget);
 
-    // Scroll area and scroll widget
+    // Scroll Arae et widget
     scrollArea = new QScrollArea(this);
     scrollWidget = new QWidget(scrollArea);
     scrollArea->setWidgetResizable(true);
@@ -36,48 +37,47 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     gridLayout = new QGridLayout(scrollWidget);
     scrollWidget->setLayout(gridLayout);
 
-    // Bottom layout and widgets
+    // Layout en dessous de la scroll Area
     QWidget *bottomWidget = new QWidget(this);
     QVBoxLayout *bottomLayout = new QVBoxLayout(bottomWidget);
 
-// Headers widget and layout
+    // Widget des Header
     QWidget *headersWidget = new QWidget(this);
     QGridLayout *headersGridLayout = new QGridLayout(headersWidget);
 
-    // Add the column headers
-// Add the column headers
+    // Ajout des titres des colonnes
     const QStringList headers = {"Numero", "Debit", "ΣDebit", "Diametre", "Longueur ", "Hauteur", "Vitesse", "Perte", "Piezo", "ΣPerte", "ΣPiezo"};
 
     for (int i = 0; i < headers.size(); ++i) {
         QLabel *label = new QLabel(headers[i], headersWidget);
         label->setAlignment(Qt::AlignCenter);
         label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        label->setFixedHeight(40); // Set only fixed height
+        label->setFixedHeight(40); // Fixe la taille
         headersGridLayout->addWidget(label, 0, i);
-        headersGridLayout->setHorizontalSpacing(0); // Remove spacing between headers
+        headersGridLayout->setHorizontalSpacing(0); // On enleve les espaces
     }
 
-// Add the units below the column headers
+    // Ajoute les unité dans le header
     const QStringList units = {"", "l/h", "l/h", "mm", "m", "m", "m/s", "m", "m", "m", "m"};
 
     for (int i = 0; i < units.size(); ++i) {
         QLabel *unitLabel = new QLabel(units[i], headersWidget);
         unitLabel->setAlignment(Qt::AlignCenter);
         unitLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        unitLabel->setFixedHeight(40); // Set only fixed height
-        headersGridLayout->addWidget(unitLabel, 1, i); // Add the unit labels in the second row of the headersGridLayout
+        unitLabel->setFixedHeight(40); // Fixe la taille
+        headersGridLayout->addWidget(unitLabel, 1, i); // Ajouter les étiquettes d'unité dans la deuxième ligne du headersGridLayout
     }
 
 
 
 
-    // Add inputs layout, scroll area, and bottom layout to the main layout
+    // Ajouter le layout des inputs, la zone de scroll, et le layout du bas au layout principal
     mainLayout->addWidget(inputsWidget);
     mainLayout->addWidget(headersWidget);
     mainLayout->addWidget(scrollArea);
     mainLayout->addWidget(bottomWidget);
 
-    // Add input fields and labels to fixedInputsLayout
+    // Ajout des champs d'entrée et des étiquettes au QGridLayout fixeInputsLayout
     Materiau = new QComboBox(this);
     Materiau->setFixedSize(75, 25);
     Materiau->addItem("PVC");
@@ -93,23 +93,23 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     QLabel *H = new QLabel("Hauteur (m)", this);
 
 
-    // Create QGridLayout for the inputs section
+    // Créer un QGridLayout pour la section des entrées
     QGridLayout *inputsGridLayout = new QGridLayout();
     inputsLayout->addLayout(inputsGridLayout);
 
-    // Add horizontal spacers to center the input fields and labels
+    // Ajouter des espaces horizontaux pour centrer les champs d'entrée et les étiquettes
     inputsGridLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 0);
     inputsGridLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 8);
 
 
-    // Add labels to inputsGridLayout
+    // Ajoute les labels à InputGridLayout
     inputsGridLayout->addWidget(Q, 0, 1);
     inputsGridLayout->addWidget(D, 0, 3);
     inputsGridLayout->addWidget(L, 0, 5);
     inputsGridLayout->addWidget(H, 0, 7);
 
 
-    // Initialize input fields
+    // Intialise les 4 entrées
     inputQ = new QLineEdit(this);
     inputD = new QLineEdit(this);
     inputL = new QLineEdit(this);
@@ -121,7 +121,7 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     inputH->setMaximumWidth(75);
 
 
-    // Add input fields to inputsGridLayout
+    // AJout les champ d'entre à InputsGridLayout
     inputsGridLayout->addWidget(inputQ, 1, 1);
     inputsGridLayout->addWidget(inputD, 1, 3);
     inputsGridLayout->addWidget(inputL, 1, 5);
@@ -134,19 +134,24 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
 
     inputsGridLayout->setSpacing(5);
 
-    // Call the function to set the column widths for inputsGridLayout
-    espacementcolonne(inputsGridLayout);
+    // Appeler la fonction pour définir la largeur des colonnes pour inputsGridLayout
+    espacementColonne(inputsGridLayout);
 
-    // Call the function to set the column widths for gridLayout
-    espacementcolonne(gridLayout);
+    // Appeler la fonction pour définir la largeur des colonnes pour gridLayout
+    espacementColonne(gridLayout);
 
-    // Add the 3 QLineEdit at the bottom of fixedInputsLayout
+    // AJoute les 4 QLineEdits a BottomWidget
     sigmadebitcase = new QLineEdit(bottomWidget);
     sigmalongueurcase = new QLineEdit(bottomWidget);
     sigmapertecase = new QLineEdit(bottomWidget);
     sigmapiezocase = new QLineEdit(bottomWidget);
 
-    // Set the size of the QLineEdit widgets
+    sigmadebitcase->setReadOnly(true);
+    sigmalongueurcase->setReadOnly(true);
+    sigmapertecase->setReadOnly(true);
+    sigmapiezocase->setReadOnly(true);
+
+    // Fixe la taille des QlineEdit
     sigmadebitcase->setMaximumWidth(100);
     sigmalongueurcase->setMaximumWidth(100);
     sigmapertecase->setMaximumWidth(100);
@@ -157,19 +162,19 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     sigmapertecase->setAlignment(Qt::AlignRight);
     sigmapiezocase->setAlignment(Qt::AlignRight);
 
-    // Add labels for each QLineEdit
+    // Ajoute un labels pour chaque QLineEdit
     QLabel *label1 = new QLabel("Débit cumulé :", bottomWidget);
     QLabel *label2 = new QLabel("Volume cumulé :", bottomWidget);
     QLabel *label3 = new QLabel("Perte cumulé :", bottomWidget);
     QLabel *label4 = new QLabel("Piezo cumulé :", bottomWidget);
 
-    // Create a QHBoxLayout for each QLineEdit and its corresponding label
+    // Crée un QHBoxLayout pour chaque QLineEdit et son label correspondant
     QHBoxLayout *hbox1 = new QHBoxLayout();
     QHBoxLayout *hbox2 = new QHBoxLayout();
     QHBoxLayout *hbox3 = new QHBoxLayout();
     QHBoxLayout *hbox4 = new QHBoxLayout();
 
-    // Add the labels and QLineEdit widgets to the QHBoxLayouts
+    // Ajouter les étiquettes et les widgets QLineEdit aux QHBoxLayouts.
     hbox1->addWidget(label1);
     hbox1->addWidget(sigmadebitcase);
     hbox2->addWidget(label2);
@@ -179,7 +184,7 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
     hbox4->addWidget(label4);
     hbox4->addWidget(sigmapiezocase);
 
-// Add the QHBoxLayouts to the bottomLayout
+    // Ajouter les QHBoxLayouts au layout inférieur (bottomLayout)
     bottomLayout->addLayout(hbox1);
     bottomLayout->addLayout(hbox2);
     bottomLayout->addLayout(hbox3);
@@ -192,7 +197,7 @@ tableau::tableau(QWidget *parent) : QWidget(parent) {
 
     inputQ->setFocus();
 
-    // Set the inputsLayout and bottomLayout spacing
+    // Définir l'espacement des inputsLayout et bottomLayout
     inputsLayout->setSpacing(10);
     bottomLayout->setSpacing(5);
 }
@@ -205,6 +210,12 @@ tableau::~tableau() {
     delete inputL;
     delete inputQ;
     delete Materiau;
+    delete scrollWidget;
+    delete scrollArea;
+    delete sigmapiezocase;
+    delete sigmapertecase;
+    delete sigmalongueurcase;
+    delete sigmadebitcase;
 }
 
 
@@ -231,46 +242,48 @@ void tableau::AjoutDonne() {
 
 }
 
+// La fonction "AjoutLigne" est appelée pour ajouter une nouvelle ligne au tableau.
+
 void tableau::AjoutLigne() {
 
-    if (_Donnees.empty()) {
+    if (_Donnees.empty()) { // Si le vecteur "_Donnees" est vide, sort de la fonction.
         return;
     }
 
-    const std::vector<float> &rowData = _Donnees.back();
+    const std::vector<float> &rowData = _Donnees.back(); // Récupère les données de la dernière ligne.
 
-    // Specify the column numbers corresponding to the inputs above
-    const std::vector<int> columnIndices = {0, 1, -1, 3, 4, 5, -1, -1, -1, -1, -1};
+    // On spécifie les colonnes que l'on veut remplir.
+    const std::vector<int> indices = {0, 1, -1, 3, 4, 5, -1, -1, -1, -1, -1};
 
-    for (int i = 0; i < columnIndices.size(); ++i) {
+    for (int i = 0; i < indices.size(); ++i) {
 
         QLineEdit *lineEdit = new QLineEdit(scrollWidget);
         lineEdit->setReadOnly(true);
         lineEdit->setAlignment(Qt::AlignCenter);
-        lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed); // Set horizontal size policy to Expanding
-        lineEdit->setFixedHeight(40); // Set only fixed height
+        lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        lineEdit->setFixedHeight(40); // Fixe la taille de la ligne.
 
-        if (columnIndices[i] != -1) {
+        if (indices[i] != -1) { // Si l'indice n'est pas égal à -1, on remplit la case correspondante avec la donnée.
             if (i == 0) {
-                lineEdit->setText(QString::number(rowData[i], 'f', 0));
+                lineEdit->setText(QString::number(rowData[i], 'f', 0)); // Formatte la donnée en nombre entier s'il s'agit de la première colonne.
             } else {
-                lineEdit->setText(QString::number(rowData[columnIndices[i]], 'f', 2));
+                lineEdit->setText(QString::number(rowData[indices[i]], 'f', 2)); // Formatte la donnée en nombre décimal s'il s'agit d'une autre colonne.
             }
         } else {
-            lineEdit->setText(""); // Empty case for other columns
+            lineEdit->setText(""); // Si l'indice est égal à -1, on laisse la case vide.
         }
 
-        gridLayout->addWidget(lineEdit, ligne, i);
+        gridLayout->addWidget(lineEdit, ligne, i); // Ajoute la case au layout.
     }
 
-    ligne++; // Increment the row index for the next line
+    ligne++; // On incrémente la valeur de "ligne" pour la prochaine ligne à ajouter.
 
-    // Adjust the height of the scrollWidget based on the number of rows
+    // On ajoute la taille de la barre de scrolling en fonction du nombre de lignes.
     int scrollWidgetHeight = ligne * ROW_HEIGHT;
     scrollWidget->setMinimumHeight(scrollWidgetHeight);
     scrollWidget->setMaximumHeight(scrollWidgetHeight);
 
-    // Set the vertical spacing and align the grid layout to the top
+    // On fixe l'espacement vertical et l'alignement.
     gridLayout->setVerticalSpacing(15);
     gridLayout->setAlignment(Qt::AlignTop);
 }
@@ -278,62 +291,99 @@ void tableau::AjoutLigne() {
 
 
 
-
-
+// La fonction "focusPreviousInput" est appelée lorsqu'un raccourci clavier est utilisé pour passer au champ d'entrée précédent.
 void tableau::focusPreviousInput() {
-
+    // Si l'entrée "hauteur" a le focus, passe le focus à l'entrée "longueur".
     if (inputH->hasFocus()) {
         inputL->setFocus();
         return;
-    } else if (inputL->hasFocus()) {
+    }
+        // Si l'entrée "longueur" a le focus, passe le focus à l'entrée "diametre".
+    else if (inputL->hasFocus()) {
         inputD->setFocus();
         return;
-    } else if (inputD->hasFocus()){
+    }
+        // Si l'entrée "diametre" a le focus, passe le focus à l'entrée "debit".
+    else if (inputD->hasFocus()){
         inputQ->setFocus();
     }
 }
 
+
+// La fonction "focusNextInput" est appelée lorsqu'un raccourci clavier est utilisé pour passer au champ d'entrée suivant.
 void tableau::focusNextInput() {
+
+    // Si l'entrée "debit" a le focus, passe le focus à l'entrée "diametre".
     if (inputQ->hasFocus()) {
         inputD->setFocus();
         return;
-    } else if (inputD->hasFocus()) {
+    }
+        // Si l'entrée "diametre" a le focus, passe le focus à l'entrée "longueur".
+    else if (inputD->hasFocus()) {
         inputL->setFocus();
         return;
-    } else if (inputL->hasFocus()){
+    }
+        // Si l'entrée "longueur" a le focus, passe le focus à l'entrée "hauteur".
+    else if (inputL->hasFocus()){
         inputH->setFocus();
     }
 }
 
+
+// La fonction "keyPressEvent" gère les événements clavier dans la fenêtre.
 void tableau::keyPressEvent(QKeyEvent *event) {
 
-    if (event->key() == Qt::Key_Control) { // si control est appuyé
+    // Si la touche Contrôle est appuyée, passe le focus à l'entrée précédente.
+    if (event->key() == Qt::Key_Control) {
         focusPreviousInput();
         return;
-    } else if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Return) { // Si tab ou entrée est appuyé
-        if (event->modifiers() == Qt::ShiftModifier && event->key() == Qt::Key_Return && Allinputfill()) { // Si shift + entrée est appuyé
+    }
+
+        // Si la touche Tab ou Entrée est appuyée.
+    else if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Return) {
+
+        // Si la touche Shift+Entrée est appuyée et que toutes les données sont remplies, effectue le calcul.
+        if (event->modifiers() == Qt::ShiftModifier && event->key() == Qt::Key_Return && Allinputfill()) {
             calcul();
             return;
-        } else if(event->key() == Qt::Key_Return && Allinputfill()){
-            AjoutDonne(); // si entrée est appuyé et que toutes les données sont mises
-        } else {
+        }
+
+            // Si Entrée est appuyée et que toutes les données sont remplies, ajoute les données.
+        else if(event->key() == Qt::Key_Return && Allinputfill()){
+            AjoutDonne();
+        }
+
+            // Sinon, passe le focus à l'entrée suivante.
+        else {
             focusNextInput();
         }
+
         return;
-    } else if(event->key() == Qt::Key_E){
+    }
+
+        // Si la touche E est appuyée, supprime toutes les données.
+    else if(event->key() == Qt::Key_E){
         _Donnees.clear();
         clearchild();
-    } else if(event->key() == Qt::Key_R){
-        if(_Donnees.size() > 0){ // Vérifier s'il y a des données
+    }
+
+        // Si la touche R est appuyée et qu'il y a des données, recopie la dernière ligne.
+    else if(event->key() == Qt::Key_R){
+        if(_Donnees.size() > 0){
             recopiederniereligne();
         }
-    } else if(event->key() == Qt::Key_M){
-        showUpdateDialog();
-    } else if(event->key() == Qt::Key_Z){
-        enleverLigne();
-    } else {
-        QWidget::keyPressEvent(event);
     }
+
+        // Si la touche M est appuyée, ouvre la boîte de dialogue pour modifier une ligne.
+    else if(event->key() == Qt::Key_M){
+        showUpdateDialog();
+    }
+
+        // Si la touche Z est appuyée, enlève une ligne.
+    else if(event->key() == Qt::Key_Z){
+        enleverLigne();
+    }
+
 }
 
 
@@ -345,227 +395,273 @@ bool tableau::Allinputfill() {
     return true; // Tout les inputs sont remplis
 }
 
+
+// La fonction "calcul" effectue des calculs sur les données du tableau.
 void tableau::calcul() {
 
-    float  k =0; // On initialise les parametres
-    float a=0;
-    float b = 0 ;
+    // Initialise les paramètres.
+    float k = 0;
+    float a = 0;
+    float b = 0;
 
+    // Initialise les variables.
     float debit = 0;
-    float debit_m3 = 0;
-    float debit_ls = 0;
-
+    float debitM3 = 0; // Débit en m3/h
+    float debitLs = 0; // Débit en l/s
     float diametre = 0;
     float longueur = 0;
     float hauteur = 0;
-
-    float pertecharge = 0;
+    float perteCharge = 0;
     float piezo = 0;
-
-    float sigmadebit = 0;
+    float sigmaDebit = 0; // Cumul débit
     float vitesse = 0;
-    float airetuyau = 0;
+    float aireTuyau = 0;
+    float sigmaPiezo = 0; // Cumul piezo
+    float sigmaPerte = 0; // Cumul perte
+    float sigmaLongueur = 0;
 
-    float sigmapiezo =0;
-    float sigmaperte = 0;
-
-    float sigmalongueur = 0;
-
+    // Calcule le cumul de débit.
     for (int i = 0; i < _Donnees.size(); ++i) {
-        sigmadebit += _Donnees[i][1];
-        _Donnees[i][2] = sigmadebit;
+        sigmaDebit += _Donnees[i][1];
+        _Donnees[i][2] = sigmaDebit;
     }
 
-
-    if (Materiau->currentText() == "PVC" || Materiau->currentText() == "PN") { // Selection des critere selon la matiere
-        k=831743.11;
+    // Sélectionne les critères en fonction de la matière.
+    if (Materiau->currentText() == "PVC" || Materiau->currentText() == "PN") {
+        k = 831743.11;
         a = 1.75;
-        b=-4.75;
+        b = -4.75;
     } else if (Materiau->currentText() == "Fonte") {
-        k=1458844.82;
+        k = 1458844.82;
         a = 1.83;
-        b=-4.89;
+        b = -4.89;
     } else if (Materiau->currentText() == "Alu") {
-        k=1707785.38;
+        k = 1707785.38;
         a = 1.89;
-        b=-4.87;
+        b = -4.87;
     }
 
-    for (int i = 0; i <_Donnees.size() ; ++i) {
+    // Effectue les calculs pour chaque ligne de données.
+    for (int i = 0; i < _Donnees.size(); ++i) {
 
+        // Récupère les données de la ligne courante.
         debit = _Donnees[i][1];
-        sigmadebit = _Donnees[i][2];
+        sigmaDebit = _Donnees[i][2];
         diametre = _Donnees[i][3];
         longueur = _Donnees[i][4];
         hauteur = _Donnees[i][5];
 
-        airetuyau = (M_PI * pow((diametre/1000) / 2, 2)); // calcul de l'air du tuyau
-        debit_m3 = sigmadebit / 3600.0 / 1000.0; //  l/h -> m3/s
+        // Calcule l'aire du tuyau.
+        aireTuyau = (M_PI * pow((diametre / 1000) / 2, 2));
 
-        vitesse = debit_m3 / airetuyau ; // calcul vitesse
+        // Calcule le débit en m3/s.
+        debitM3 = sigmaDebit / 3600.0 / 1000.0;
 
-        float sigmadebit_ls = sigmadebit /3600.0; // convert l/h -> l/s
+        // Calcule la vitesse.
+        vitesse = debitM3 / aireTuyau;
 
-        pertecharge = k * pow(sigmadebit_ls,a)*pow(diametre,b)*longueur;// calcul perte
+        // Convertit le débit en l/s.
+        float sigmaDebitLs = sigmaDebit / 3600.0;
 
-        piezo = pertecharge + hauteur; // calcul piezo
+        // Calcule la perte de charge.
+        perteCharge = k * pow(sigmaDebitLs, a) * pow(diametre, b) * longueur;
 
+        // Calcule la hauteur piezométrique.
+        piezo = perteCharge + hauteur;
+
+        // Ajoute les données calculées au vecteur.
         _Donnees[i][6] = vitesse;
-        _Donnees[i][7] = pertecharge;
+        _Donnees[i][7] = perteCharge;
         _Donnees[i][8] = piezo;
 
     }
 
+    // Calcule les cumuls pour chaque ligne de données.
     for (int i = 0; i < _Donnees.size(); ++i) {
-        sigmaperte += _Donnees[i][7];
-        sigmapiezo += _Donnees[i][8];
-        sigmalongueur += _Donnees[i][4];
-
-
-        _Donnees[i][9] = sigmaperte;
-        _Donnees[i][10] = sigmapiezo;
+        sigmaPerte += _Donnees[i][7];
+        sigmaPiezo += _Donnees[i][8];
+        sigmaLongueur += _Donnees[i][4];
+        _Donnees[i][9] = sigmaPerte;
+        _Donnees[i][10] = sigmaPiezo;
     }
 
-    sigmadebitcase->setText(QString::number(sigmadebit, 'f', 2));
+    // Affiche les résultats dans les cases correspondantes en arrondissant à deux chiffres après la virgule.
+    sigmadebitcase->setText(QString::number(sigmaDebit, 'f', 2));
     sigmadebitcase->setAlignment(Qt::AlignCenter);
-
-    sigmalongueurcase->setText(QString::number(sigmalongueur, 'f', 2));
+    sigmalongueurcase->setText(QString::number(sigmaLongueur, 'f', 2));
     sigmalongueurcase->setAlignment(Qt::AlignCenter);
-
-    sigmapertecase->setText(QString::number(sigmaperte, 'f', 2));
+    sigmapertecase->setText(QString::number(sigmaPerte, 'f', 2));
     sigmapertecase->setAlignment(Qt::AlignCenter);
-
-    sigmapiezocase->setText(QString::number(sigmapiezo, 'f', 2));
+    sigmapiezocase->setText(QString::number(sigmaPiezo, 'f', 2));
     sigmapiezocase->setAlignment(Qt::AlignCenter);
 
+    // Rafraîchit le tableau.
     RafraichirTableau();
 }
 
 
+
+// La fonction "RafraichirTableau" permet de mettre à jour un tableau en affichant les nouvelles données.
 void tableau::RafraichirTableau() {
-    // Clear all widgets from the scroll area
+
+    // Supprime toutes les cases du tableau.
     clearchild();
 
+    // Initialise le numéro de ligne.
     ligne = 1;
 
-    // Calculate the total cumulative flow rate
-    float totalCumulativeFlowRate = 0.0f;
-    for (const std::vector<float> &rowData : _Donnees) {
-        totalCumulativeFlowRate += rowData[2];
-    }
-
-    // Find the index of the row where the cumulative flow rate is greater than or equal to half of the total cumulative flow rate
-    float cumulativeFlowRate = _Donnees[_Donnees.size()-1][2];
-    float halfFlowRate = cumulativeFlowRate/2;
-    float halfFlowRateRowIndex = 0;
+    // Trouve l'index où le débit cumulé est supérieur à la moitié du débit cumulé total.
+    float cumulDebit = _Donnees[_Donnees.size()-1][2];
+    float moitieCumulDebit = cumulDebit / 2;
+    float indexMilieuHydrolique = 0;
 
     for (int i = 0; i < _Donnees.size(); ++i) {
-        if (_Donnees[i][2]>halfFlowRate) {
-            halfFlowRateRowIndex = i;
+        if (_Donnees[i][2] > moitieCumulDebit) {
+            indexMilieuHydrolique = i;
             break;
         }
     }
 
-    // Add the data to the scroll area
-    for (const std::vector<float> &rowData : _Donnees) {
-        const std::vector<int> columnIndices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        bool redText = (rowData[6] > 2);
+    // Ajoute les données au tableau.
+    for (const std::vector<float> &donneesLigne : _Donnees) {
 
-        for (int i = 0; i < columnIndices.size(); ++i) {
+        // Les indices des colonnes à afficher.
+        const std::vector<int> indicesColonnes = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+        // Détermine si le texte doit être en rouge.
+        bool texteRouge = (donneesLigne[6] > 2);
+
+        for (int i = 0; i < indicesColonnes.size(); ++i) {
+
+            // Crée une nouvelle ligne de texte.
             QLineEdit *lineEdit = new QLineEdit(scrollWidget);
+
+            // Rend la ligne de texte en lecture seule.
             lineEdit->setReadOnly(true);
+
+            // Centre le texte dans la ligne de texte.
             lineEdit->setAlignment(Qt::AlignCenter);
-            lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed); // Set horizontal size policy to Expanding
-            lineEdit->setFixedHeight(40); // Set only fixed height
+
+            // Définit la politique de redimensionnement de la ligne de texte.
+            lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+            // Définit la hauteur fixe de la ligne de texte.
+            lineEdit->setFixedHeight(40);
 
             if (i == 0) {
-                lineEdit->setText(QString::number(rowData[i], 'f', 0));
-            } else if (i == 6 && redText) {
+                lineEdit->setText(QString::number(donneesLigne[i], 'f', 0));
+            } else if (i == 6 && texteRouge) {
                 lineEdit->setStyleSheet("QLineEdit { background-color : red; color : white; }");
-                lineEdit->setText(QString::number(rowData[columnIndices[i]], 'f', 2));
+                lineEdit->setText(QString::number(donneesLigne[indicesColonnes[i]], 'f', 2));
             } else {
-                lineEdit->setText(QString::number(rowData[columnIndices[i]], 'f', 2));
+                lineEdit->setText(QString::number(donneesLigne[indicesColonnes[i]], 'f', 2));
             }
 
-            // Set the background color to orange for the row where the cumulative flow rate is greater than or equal to half of the total cumulative flow rate
-            if (ligne - 1 == halfFlowRateRowIndex) {
+            // Colorie la ligne en orange pour le milieu hydrolique.
+            if (ligne - 1 == indexMilieuHydrolique) {
                 lineEdit->setStyleSheet("QLineEdit { background-color : orange; }");
             }
 
+            // Définit l'espacement vertical du layout.
             gridLayout->setVerticalSpacing(10);
-            gridLayout->addWidget(lineEdit, ligne, columnIndices[i]);
+
+            // Ajoute la ligne de texte au layout.
+            gridLayout->addWidget(lineEdit, ligne, indicesColonnes[i]);
         }
 
+        // Incrémente le numéro de ligne.
         ligne++;
     }
 
-    // Adjust the height of the scrollWidget based on the number of rows
+    // Calcule la hauteur du widget de défilement et ajuste sa hauteur minimum et maximum en conséquence.
     int scrollWidgetHeight = ligne * ROW_HEIGHT;
     scrollWidget->setMinimumHeight(scrollWidgetHeight);
     scrollWidget->setMaximumHeight(scrollWidgetHeight);
-    gridLayout->setVerticalSpacing(15);
 
-    // Align the grid layout to the top
+    gridLayout->setVerticalSpacing(15);
     gridLayout->setAlignment(Qt::AlignTop);
 }
 
 
 
+// La fonction "clearchild" permet de retirer toutes les cases dans un layout.
+
 void tableau::clearchild() {
-    QLayoutItem *child;
-    while ((child = gridLayout->takeAt(0)) != 0) {
-        delete child->widget();
-        delete child;
+    QLayoutItem *enfant;
+
+    // Tant qu'il y a encore des éléments dans le layout, retire-les.
+    while ((enfant = gridLayout->takeAt(0)) != 0) {
+
+        // Supprime le widget contenu dans l'élément layout.
+        delete enfant->widget();
+
+        // Supprime l'élément layout.
+        delete enfant;
     }
+
+    // Réinitialise les hauteurs minimum et maximum du widget de défilement.
     scrollWidget->setMinimumHeight(0);
     scrollWidget->setMaximumHeight(0);
 }
 
 
-void tableau::recopiederniereligne() {
+
+void tableau::recopiederniereligne() { // Fonction déclenché par la touche 'R' qui permet de recopier la derniere ligne entrée
 
     int taille =_Donnees.size();
     std::vector<float> lastline = _Donnees[taille-1]; // Pour avoir la derniere ligne du vecteur
     std::vector<float> recopie(11, 0.0f);
 
-    recopie[0] = lastline[0]+1;
-    recopie[1] = lastline[1];
-    recopie[3] = lastline[3];
-    recopie[4] = lastline[4];
-    recopie[5] = lastline[5];
+    recopie[0] = lastline[0]+1; // Numéro
+    recopie[1] = lastline[1];   // Debit
+    recopie[3] = lastline[3];   // Diametre
+    recopie[4] = lastline[4];   // Longueur
+    recopie[5] = lastline[5];   // Hauteur
 
     _Donnees.push_back(recopie);
     AjoutLigne();
 }
 
 
+// Ouvre une boîte de dialogue permettant à l'utilisateur de modifier les données d'une ligne dans le tableau
 void tableau::showUpdateDialog() {
+    // Crée une nouvelle fenêtre de dialogue en tant que sous-fenêtre de la fenêtre principale de l'application
     QDialog *updateDialog = new QDialog(this);
+    // Définit le titre de la fenêtre de dialogue
     updateDialog->setWindowTitle("Modifier ligne");
 
+    // Crée un formulaire dans la fenêtre de dialogue pour saisir les nouvelles données de la ligne
     QFormLayout *formLayout = new QFormLayout(updateDialog);
 
+    // Ajoute un champ pour entrer le numéro de ligne à modifier
     QLineEdit *rowNumberLineEdit = new QLineEdit(updateDialog);
-    rowNumberLineEdit->setValidator(new QIntValidator(0, _Donnees.size() - 1, updateDialog));
+    rowNumberLineEdit->setValidator(new QIntValidator(0, _Donnees.size() - 1,updateDialog)); // Permet de limiter la saisie à un nombre entier valide
     formLayout->addRow("Ligne :", rowNumberLineEdit);
 
+    // Ajoute un champ pour entrer le nouveau débit de la ligne
     QLineEdit *debitLineEdit = new QLineEdit(updateDialog);
     formLayout->addRow("Debit:", debitLineEdit);
 
+    // Ajoute un champ pour entrer le nouveau diamètre de la ligne
     QLineEdit *diameterLineEdit = new QLineEdit(updateDialog);
     formLayout->addRow("Diametre :", diameterLineEdit);
 
+    // Ajoute un champ pour entrer la nouvelle longueur de la ligne
     QLineEdit *lengthLineEdit = new QLineEdit(updateDialog);
     formLayout->addRow("Longueur :", lengthLineEdit);
 
+    // Ajoute un champ pour entrer la nouvelle hauteur de la ligne
     QLineEdit *heightLineEdit = new QLineEdit(updateDialog);
     formLayout->addRow("Hauteur :", heightLineEdit);
 
-    QPushButton *updateButton = new QPushButton("Update", updateDialog);
+    // Ajoute un bouton pour valider les nouvelles données et fermer la fenêtre de dialogue
+    QPushButton *updateButton = new QPushButton("Modifier", updateDialog);
     formLayout->addWidget(updateButton);
 
+    // Fonction qui permet de définir le comportement à adopter lorsque l'utilisateur appuie sur la touche "Entrée" dans un champ de saisie
     auto handleEnterKeyPress = [](QLineEdit *current, QLineEdit *next) {
         QObject::connect(current, &QLineEdit::returnPressed, [current, next]() {
+            // Si le champ en cours de saisie est rempli et que le champ suivant (s'il y en a un) est également rempli, déplace le curseur vers le champ suivant
             if (!current->text().isEmpty() && (next == nullptr || !next->text().isEmpty())) {
                 if (next) {
                     next->setFocus();
@@ -574,89 +670,107 @@ void tableau::showUpdateDialog() {
         });
     };
 
+    // Associe la fonction handleEnterKeyPress aux champs de saisie pour gérer les appuis sur la touche "Entrée"
     handleEnterKeyPress(rowNumberLineEdit, debitLineEdit);
     handleEnterKeyPress(debitLineEdit, diameterLineEdit);
     handleEnterKeyPress(diameterLineEdit, lengthLineEdit);
     handleEnterKeyPress(lengthLineEdit, heightLineEdit);
-    handleEnterKeyPress(heightLineEdit, nullptr);
+    handleEnterKeyPress(heightLineEdit, nullptr); // Le dernier champ n'a pas de champ suivant, donc next est nul
 
+
+    // Fonction qui met à jour les données de la ligne avec les nouvelles données saisies par l'utilisateur et ferme la fenêtre de dialogue
     auto updateDataAndClose = [this, rowNumberLineEdit, debitLineEdit, diameterLineEdit, lengthLineEdit, heightLineEdit, updateDialog]() {
+        // Récupère
+        // Récupère les nouvelles données saisies par l'utilisateur
         int rowNumber = rowNumberLineEdit->text().toInt();
         float debit = debitLineEdit->text().toFloat();
         float diameter = diameterLineEdit->text().toFloat();
         float length = lengthLineEdit->text().toFloat();
         float height = heightLineEdit->text().toFloat();
 
+        // Met à jour les données de la ligne avec les nouvelles données saisies
         updateData(rowNumber, debit, diameter, length, height);
+        // Ferme la fenêtre de dialogue
         updateDialog->close();
     };
 
+    // Associe la fonction updateDataAndClose au bouton "Update" pour mettre à jour les données de la ligne et fermer la fenêtre de dialogue lorsque l'utilisateur clique sur le bouton
     connect(updateButton, &QPushButton::clicked, updateDataAndClose);
 
-    // Add a QShortcut to trigger update when Enter is pressed
+    // Ajoute un raccourci clavier pour valider les nouvelles données et fermer la fenêtre de dialogue lorsque l'utilisateur appuie sur la touche "Entrée"
     QShortcut *enterShortcut = new QShortcut(QKeySequence(Qt::Key_Enter), updateDialog);
     QShortcut *returnShortcut = new QShortcut(QKeySequence(Qt::Key_Return), updateDialog);
     connect(enterShortcut, &QShortcut::activated, updateDataAndClose);
     connect(returnShortcut, &QShortcut::activated, updateDataAndClose);
 
+    // Définit le layout du formulaire comme layout de la fenêtre de dialogue et affiche la fenêtre de dialogue modale
     updateDialog->setLayout(formLayout);
     updateDialog->exec();
 }
 
 
-void tableau::updateData(int rowNumber, float debit, float diameter, float length, float height) {
-    if (rowNumber >= 0 && rowNumber < _Donnees.size()) {
-        rowNumber-=1;
-        _Donnees[rowNumber][1] = debit;
-        _Donnees[rowNumber][3] = diameter;
-        _Donnees[rowNumber][4] = length;
-        _Donnees[rowNumber][5] = height;
+// La fonction "updateData" prend en entrée un numéro de ligne, un débit, un diamètre, une longueur et une hauteur,
+// puis met à jour les données de la ligne correspondante dans un tableau.
+void tableau::updateData(int numeroLigne, float debit, float diametre, float longueur, float hauteur) {
 
-        // Recalculate and refresh the table.
+    // Vérifie si le numéro de ligne est valide (c'est-à-dire s'il se trouve dans la plage d'index des données).
+    if (numeroLigne >= 0 && numeroLigne < _Donnees.size()) {
+        // Décrémente le numéro de ligne de 1 pour correspondre à l'indice de tableau (qui commence à 0).
+        numeroLigne -= 1;
+
+        // Met à jour les données de la ligne avec les nouvelles valeurs fournies.
+        _Donnees[numeroLigne][1] = debit;
+        _Donnees[numeroLigne][3] = diametre;
+        _Donnees[numeroLigne][4] = longueur;
+        _Donnees[numeroLigne][5] = hauteur;
+
+        // Recalculer et rafraîchir le tableau.
         calcul();
         RafraichirTableau();
     }
 }
 
+
 void tableau::enleverLigne() {
-    // Create a new dialog for inputting the row number
-    QDialog *deleteDialog = new QDialog(this);
-    deleteDialog->setWindowTitle("Supprimer une ligne");
-    deleteDialog->setFixedSize(300, 100);
+    // Crée une nouvelle fenêtre de dialogue pour demander le numéro de la ligne à supprimer
+    QDialog *supprimerDialog = new QDialog(this);
+    supprimerDialog->setWindowTitle("Supprimer une ligne");
+    supprimerDialog->setFixedSize(300, 100);
 
-    // Add a label and line edit for inputting the row number
-    QLabel *rowNumberLabel = new QLabel("Numéro de ligne :", deleteDialog);
-    QLineEdit *rowNumberLineEdit = new QLineEdit(deleteDialog);
-    rowNumberLineEdit->setValidator(new QIntValidator(1, _Donnees.size(), deleteDialog)); // Only allow integers within the range of the data
-    rowNumberLineEdit->setFixedWidth(50);
+    // Ajoute un label et un champ de saisie pour entrer le numéro de la ligne à supprimer
+    QLabel *numeroLigneLabel = new QLabel("Numéro de ligne :", supprimerDialog);
+    QLineEdit *numeroLigneLineEdit = new QLineEdit(supprimerDialog);
+    numeroLigneLineEdit->setValidator(new QIntValidator(1, _Donnees.size(), supprimerDialog)); // Permet de limiter la saisie à un nombre entier valide
+    numeroLigneLineEdit->setFixedWidth(50);
 
-    // Add a button to confirm the deletion
-    QPushButton *deleteButton = new QPushButton("Supprimer", deleteDialog);
-    connect(deleteButton, &QPushButton::clicked, [this, rowNumberLineEdit, deleteDialog]() {
-        int rowNumber = rowNumberLineEdit->text().toInt() - 1;
-        if (rowNumber >= 0 && rowNumber < _Donnees.size()) {
-            _Donnees.erase(_Donnees.begin() + rowNumber); // Remove the row from the data
-            // Reassign line numbers starting from the deleted row
-            for (int i = rowNumber; i < _Donnees.size(); ++i) {
+    // Ajoute un bouton pour confirmer la suppression de la ligne
+    QPushButton *supprimerButton = new QPushButton("Supprimer", supprimerDialog);
+    connect(supprimerButton, &QPushButton::clicked, [this, numeroLigneLineEdit, supprimerDialog]() {
+        int numeroLigne = numeroLigneLineEdit->text().toInt() - 1;
+        if (numeroLigne >= 0 && numeroLigne < _Donnees.size()) {
+            _Donnees.erase(_Donnees.begin() + numeroLigne); // Supprime la ligne du tableau
+            // Réaffecte les numéros de ligne à partir de la ligne supprimée
+            for (int i = numeroLigne; i < _Donnees.size(); ++i) {
                 _Donnees[i][0] = i + 1;
             }
-            RafraichirTableau(); // Refresh the table display
+            RafraichirTableau(); // Actualise l'affichage du tableau
         }
-        deleteDialog->close();
+        supprimerDialog->close();
     });
 
-    // Add a layout to the dialog
-    QVBoxLayout *layout = new QVBoxLayout(deleteDialog);
-    layout->addWidget(rowNumberLabel);
-    layout->addWidget(rowNumberLineEdit);
-    layout->addWidget(deleteButton);
+    // Ajoute un layout à la fenêtre de dialogue
+    QVBoxLayout *layout = new QVBoxLayout(supprimerDialog);
+    layout->addWidget(numeroLigneLabel);
+    layout->addWidget(numeroLigneLineEdit);
+    layout->addWidget(supprimerButton);
     layout->setAlignment(Qt::AlignCenter);
 
-    // Show the dialog
-    deleteDialog->exec();
+    // Affiche la fenêtre de dialogue
+    supprimerDialog->exec();
 
     calcul();
     RafraichirTableau();
 }
+
 
 
